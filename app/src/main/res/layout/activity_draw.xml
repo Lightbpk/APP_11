@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:hardwareAccelerated="false"
     tools:context="bpk.light.app_11.DrawActivity">
     <ImageView
         android:id="@+id/image1"
