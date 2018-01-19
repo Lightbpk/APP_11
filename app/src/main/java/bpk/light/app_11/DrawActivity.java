@@ -141,7 +141,7 @@ public class DrawActivity extends Activity {
                     if(rColor==255&&gColor==255&&bColor==255)code="0";
                     else if(rColor==78&&gColor==78&&bColor==78)code="1";
                     else if(rColor==144&&gColor==144&&bColor==144)code="2";
-                    else if(rColor==182&&gColor==182&&bColor==182)code="3";
+                    else if(rColor==183&&gColor==183&&bColor==183)code="3";
                     else if(rColor==189&&gColor==189&&bColor==189)code="4";
                     else if(rColor==119&&gColor==119&&bColor==119)code="5";
                     else if(rColor==110&&gColor==110&&bColor==110)code="6";
