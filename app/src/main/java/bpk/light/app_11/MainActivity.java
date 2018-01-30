@@ -18,7 +18,7 @@ Button btn1;
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,DrawActivity.class);
+                Intent intent = new Intent(MainActivity.this,TwoActivity.class);
                 startActivity(intent);
             }
         });
