@@ -2,6 +2,7 @@ package bpk.light.app_11;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,6 +10,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.Touch;
@@ -21,6 +24,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import static android.util.DisplayMetrics.DENSITY_DEFAULT;
 import static android.util.DisplayMetrics.DENSITY_DEVICE_STABLE;
 import static android.util.DisplayMetrics.DENSITY_HIGH;
@@ -28,62 +42,89 @@ import static android.util.DisplayMetrics.DENSITY_LOW;
 import static android.util.DisplayMetrics.DENSITY_MEDIUM;
 
 public class DrawActivity extends Activity {
-
+    Context context;
     //int width, height;
     String LL="LightLog";
     Bitmap dest;
+    int pn;
+    Bitmap bmOriginal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(new DrawView(this));
+        Intent intent = getIntent();
+        pn =intent.getIntExtra("PicNum",1);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         Log.d(LL,String.format("display %s x %s",size.x,size.y));
+        switch(pn) {
+            case 1: {
+                Glide.
+                        with(getApplicationContext())
+                        .load("http://www.picshare.ru/uploads/180130/K88iuera7Q.gif")
+                        .asBitmap().into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        bmOriginal = resource;
+                        setContentView(new DrawView(context));
+                        Log.d(LL, "Loaded!");
+                    }
+                });
+            }
+            case 2 :{
+                Glide.
+                        with(getApplicationContext())
+                        .load("http://www.picshare.ru/uploads/180130/7Lqubex01W.gif")
+                        .asBitmap().into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                        bmOriginal = resource;
+                        setContentView(new DrawView(context));
+                        Log.d(LL, "Loaded!");
+                    }
+                });
+            }
+        }
     }
+
     class DrawView extends View {
         Bitmap bigduck;
         int x,y,paint;
-        Bitmap bmOriginal;
-        public DrawView(Context context){
-            super(context);
-            paint = Color.argb(255,149,66,14);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inDensity= DENSITY_HIGH;
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            //options.inJustDecodeBounds = true;
-            bmOriginal = BitmapFactory.decodeResource(getResources(), R.drawable.pixduckwb,options);
-            Log.d(LL, String.format("bitmap = %s, width = %s, height = %s, mimetype = %s",
-                    bmOriginal, options.outWidth,
-                    options.outHeight,
-                    options.outMimeType));
-            //bmOriginal.setDensity(2);
-            //float  dency = getResources().getDisplayMetrics().density;
-            dest = Bitmap.createBitmap(
-                    bmOriginal.getWidth(),
-                    bmOriginal.getHeight(),
-                    bmOriginal.getConfig());
-            //Log.d(LL,"Width "+bmOriginal.getWidth()+" Height "+bmOriginal.getHeight()+" dency "+dency);
-            for(int x = 0; x < bmOriginal.getWidth(); x++){
-                for(int y = 0; y < bmOriginal.getHeight(); y++) {
-                    int pixel = bmOriginal.getPixel(x, y);
-                    int alfaPixel = Color.alpha(pixel);
-                    int rColor = Color.red(pixel);
-                    int gColor = Color.green(pixel);
-                    int bColor = Color.blue(pixel);
-                    Log.d(LL, "X " + x + " Y " + y + "   alfa " + alfaPixel + " r " + rColor + " g " + gColor + " b " + bColor);
-                    int newPixel = Color.argb(alfaPixel, rColor, gColor, bColor);
-                    dest.setPixel(x, y, newPixel);
-                }
-                //int newPixel = Color.argb(255,0,0,0);
-                //dest.setPixel(0,0,newPixel);
-            }
-            bigduck = Bitmap.createScaledBitmap(bmOriginal,bmOriginal.getWidth()*30,bmOriginal.getHeight()*30,false);
-        }
 
-        @Override
+        public DrawView(Context context) {
+            super(context);
+            paint = Color.argb(255, 149, 66, 14);
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inDensity = DENSITY_HIGH;
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            if (bmOriginal != null) {
+                Log.d(LL, String.format("bitmap = %s, width = %s, height = %s, mimetype = %s",
+                        bmOriginal, options.outWidth,
+                        options.outHeight,
+                        options.outMimeType));
+                dest = Bitmap.createBitmap(
+                        bmOriginal.getWidth(),
+                        bmOriginal.getHeight(),
+                        bmOriginal.getConfig());
+                for (int x = 0; x < bmOriginal.getWidth(); x++) {
+                    for (int y = 0; y < bmOriginal.getHeight(); y++) {
+                        int pixel = bmOriginal.getPixel(x, y);
+                        int alfaPixel = Color.alpha(pixel);
+                        int rColor = Color.red(pixel);
+                        int gColor = Color.green(pixel);
+                        int bColor = Color.blue(pixel);
+                        Log.d(LL, "X " + x + " Y " + y + "   alfa " + alfaPixel + " r " + rColor + " g " + gColor + " b " + bColor);
+                        int newPixel = Color.argb(alfaPixel, rColor, gColor, bColor);
+                        dest.setPixel(x, y, newPixel);
+                    }
+                }
+                bigduck = Bitmap.createScaledBitmap(bmOriginal, bmOriginal.getWidth() * 30, bmOriginal.getHeight() * 30, false);
+            }else Log.d(LL,"Null bitmap");
+        }
+       /* @Override
         public boolean onTouchEvent(MotionEvent  event) {
             Log.d(LL, "Coords: x=" + event.getX() + ",y=" + event.getY());
             x = (int)event.getX();
@@ -124,7 +165,7 @@ public class DrawActivity extends Activity {
                 invalidate();
             }
             return true;
-        }
+        }*/
 
         protected void onDraw(Canvas canvas){
             String code="";
