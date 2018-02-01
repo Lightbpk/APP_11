@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -25,11 +26,13 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.IntStream;
+import java.util.Set;
 
-import static android.util.DisplayMetrics.DENSITY_DEFAULT;
-import static android.util.DisplayMetrics.DENSITY_DEVICE_STABLE;
 import static android.util.DisplayMetrics.DENSITY_HIGH;
 
 
@@ -56,7 +59,7 @@ public class DrawActivity extends Activity {
             case 1: {
                 Glide.
                         with(getApplicationContext())
-                        .load("http://www.picshare.ru/uploads/180130/K88iuera7Q.gif")
+                        .load("http://www.picshare.ru/uploads/180201/n4SNu8p6pc.bmp")
                         .asBitmap().into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -69,7 +72,7 @@ public class DrawActivity extends Activity {
             case 2 :{
                 Glide.
                         with(getApplicationContext())
-                        .load("http://www.picshare.ru/uploads/180130/7Lqubex01W.gif")
+                        .load("http://www.picshare.ru/uploads/180201/dNvCCPn466.bmp")
                         .asBitmap().into(new SimpleTarget<Bitmap>() {
                     @Override
                     public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -93,8 +96,8 @@ public class DrawActivity extends Activity {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inDensity = DENSITY_HIGH;
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            colorPix = new int[50];
-            ArrayList<Integer> colorNum = new List<>();
+            colorPix = new int[259];
+            //List<Integer> colorNum = new ArrayList<>();
             if (bmOriginal != null) {
                 Log.d(LL, String.format("bitmap = %s, width = %s, height = %s, mimetype = %s",
                         bmOriginal, options.outWidth,
@@ -104,6 +107,7 @@ public class DrawActivity extends Activity {
                         bmOriginal.getWidth(),
                         bmOriginal.getHeight(),
                         bmOriginal.getConfig());
+                int c =0;
                 for (int x = 0; x < bmOriginal.getWidth(); x++) {
                     for (int y = 0; y < bmOriginal.getHeight(); y++) {
                         int pixel = bmOriginal.getPixel(x, y);
@@ -113,74 +117,65 @@ public class DrawActivity extends Activity {
                         int bColor = Color.blue(pixel);
                         Log.d(LL, "X " + x + " Y " + y + "   alfa " + alfaPixel + " r " + rColor + " g " + gColor + " b " + bColor);
                         int newPixel = Color.argb(alfaPixel, rColor, gColor, bColor);
-                        dest.setPixel(x, y, newPixel);
+                        dest.setPixel(x, y, Color.argb(255,255,255,255));
                         for(int j =0; j < colorPix.length;j++){
                             if(colorPix[j]!= newPixel){
-                                colorNum.add();
+                                colorPix[c]=newPixel;
+                                //colorNum.add(newPixel);
+                                Log.d(LL, String.format("C = %s newpix = %s",c, colorPix[c]));
+                                c++;
+                                break;
                             }
                         }
                     }
                 }
+                int[] pixCode = new int[colorPix.length];
+                pixCode =colorPix;
+                Arrays.sort(pixCode);
+                int n=0;
+                int varcolor =0;
+                while(n <(pixCode.length-1)) {
+                    if (pixCode[n]==0){
+                        varcolor = n-1;
+                        break;
+                    }
+                    //Log.d(LL, String.format("ColorRGB = %s index %s",colorPix[n],n));
+                    n++;
+                }
 
+                //Поменять bmOriginal на dest для обесцвецивания
                 bigduck = Bitmap.createScaledBitmap(bmOriginal, bmOriginal.getWidth() * 30, bmOriginal.getHeight() * 30, false);
             }else Log.d(LL,"Null bitmap");
         }
-       /* @Override
-        public boolean onTouchEvent(MotionEvent  event) {
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
             Log.d(LL, "Coords: x=" + event.getX() + ",y=" + event.getY());
             x = (int)event.getX();
             y = (int)event.getY();
-            if(x>0&&x<=30&&y>510&&y<=540) {
-                paint = Color.argb(255, 149, 66, 14);
-                Log.d(LL,String.format("Set brown x  = %s y = %s",x,y));
-            }
-            else if(x>60&&x<=90&&y>510&&y<=540){
-                paint = Color.argb(255,254,231,27);
-                Log.d(LL,String.format("Set yellow x  = %s y = %s",x,y));
-            }
-            else if(x>120&&x<=150&&y>510&&y<=540){
-                paint = Color.argb(255,255,167,117);
-                Log.d(LL,String.format("Set pink x  = %s y = %s",x,y));
-            }
-            else if(x>180&&x<=210&&y>510&&y<=540){
-                paint = Color.argb(255,186,229,160);
-                Log.d(LL,String.format("Set LightGreen x  = %s y = %s",x,y));
-            }
-            else if(x>240&&x<=270&&y>510&&y<=540){
-                paint = Color.argb(255,109,154,85);
-                Log.d(LL,String.format("Set Green x  = %s y = %s",x,y));
-            }
-            else if(x>300&&x<=330&&y>510&&y<=540){
-                paint = Color.argb(255,196,148,22);
-                Log.d(LL,String.format("Set LightBrown x  = %s y = %s",x,y));
-            }
-            else if(x>360&&x<=390&&y>510&&y<=540){
-                paint = Color.argb(255,255,255,255);
-                Log.d(LL,String.format("Set Wight x  = %s y = %s",x,y));
-            }
-            else if(y>540);
-            else {
                 Log.d(LL,String.format("Non set x  = %s y = %s",x,y));
                 dest.setPixel(x/30, y/30, paint);
                 bigduck = Bitmap.createScaledBitmap(dest, dest.getWidth() * 30, dest.getHeight() * 30, false);
                 invalidate();
-            }
+
             return true;
-        }*/
+        }
 
         protected void onDraw(Canvas canvas){
             String code="";
             canvas.drawBitmap(bigduck,0,0,null);
             Paint p = new Paint();
-            Rect rect = new Rect(360,510,390,540);
+
             for(int x = 0; x < bmOriginal.getWidth(); x++){
                 for(int y = 0; y < bmOriginal.getHeight(); y++){
                     int pixel = bmOriginal.getPixel(x,y);
-                    //int alfaPixel = Color.alpha(pixel);
-                    int rColor = Color.red(pixel);
-                    int gColor = Color.green(pixel);
-                    int bColor = Color.blue(pixel);
-                    if(rColor==255&&gColor==255&&bColor==255)code="0";
+                    Rect rect = new Rect(x*30,y*30,(x*30)+30,(y*30)+30);
+                    for(int i=0; i<colorPix.length-1;i++ ){
+                        if(pixel == colorPix[i]&&pixel!=0){
+                            code = ""+i;
+                            break;
+                        }
+                    }
+                    /*if(rColor==255&&gColor==255&&bColor==255)code="0";
                     else if(rColor==16&&gColor==118&&bColor==183)code="1";
                     else if(rColor==144&&gColor==144&&bColor==144)code="2";
                     else if(rColor==183&&gColor==183&&bColor==183)code="3";
@@ -192,9 +187,9 @@ public class DrawActivity extends Activity {
                     else if(rColor==255&&gColor==167&&bColor==117)code="3";
                     else if(rColor==186&&gColor==229&&bColor==160)code="4";
                     else if(rColor==109&&gColor==154&&bColor==85)code="5";
-                    else if(rColor==196&&gColor==148&&bColor==22)code="6";
+                    else if(rColor==196&&gColor==148&&bColor==22)code="6";*/
                     p.setColor(Color.argb(150,0,0,0));
-                    p.setTextSize(29);
+                    p.setTextSize(10);
                     canvas.drawText(code,x*30,y*30+30,p);
                     p.setStyle(Paint.Style.STROKE);
                     canvas.drawRect(rect, p);
