@@ -10,36 +10,28 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.text.method.Touch;
-import android.util.DisplayMetrics;
+
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
+
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
+
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static android.util.DisplayMetrics.DENSITY_DEFAULT;
 import static android.util.DisplayMetrics.DENSITY_DEVICE_STABLE;
 import static android.util.DisplayMetrics.DENSITY_HIGH;
-import static android.util.DisplayMetrics.DENSITY_LOW;
-import static android.util.DisplayMetrics.DENSITY_MEDIUM;
+
 
 public class DrawActivity extends Activity {
     Context context;
@@ -92,7 +84,8 @@ public class DrawActivity extends Activity {
 
     class DrawView extends View {
         Bitmap bigduck;
-        int x,y,paint;
+        int x,y,paint,tempColor;
+        int[] colorPix;
 
         public DrawView(Context context) {
             super(context);
@@ -100,6 +93,8 @@ public class DrawActivity extends Activity {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inDensity = DENSITY_HIGH;
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            colorPix = new int[50];
+            ArrayList<Integer> colorNum = new List<>();
             if (bmOriginal != null) {
                 Log.d(LL, String.format("bitmap = %s, width = %s, height = %s, mimetype = %s",
                         bmOriginal, options.outWidth,
@@ -119,8 +114,14 @@ public class DrawActivity extends Activity {
                         Log.d(LL, "X " + x + " Y " + y + "   alfa " + alfaPixel + " r " + rColor + " g " + gColor + " b " + bColor);
                         int newPixel = Color.argb(alfaPixel, rColor, gColor, bColor);
                         dest.setPixel(x, y, newPixel);
+                        for(int j =0; j < colorPix.length;j++){
+                            if(colorPix[j]!= newPixel){
+                                colorNum.add();
+                            }
+                        }
                     }
                 }
+
                 bigduck = Bitmap.createScaledBitmap(bmOriginal, bmOriginal.getWidth() * 30, bmOriginal.getHeight() * 30, false);
             }else Log.d(LL,"Null bitmap");
         }
@@ -180,7 +181,7 @@ public class DrawActivity extends Activity {
                     int gColor = Color.green(pixel);
                     int bColor = Color.blue(pixel);
                     if(rColor==255&&gColor==255&&bColor==255)code="0";
-                    else if(rColor==78&&gColor==78&&bColor==78)code="1";
+                    else if(rColor==16&&gColor==118&&bColor==183)code="1";
                     else if(rColor==144&&gColor==144&&bColor==144)code="2";
                     else if(rColor==183&&gColor==183&&bColor==183)code="3";
                     else if(rColor==189&&gColor==189&&bColor==189)code="4";
